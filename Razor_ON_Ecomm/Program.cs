@@ -5,10 +5,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+var connection = String.Empty;
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
+    connection = builder.Configuration.GetConnectionString("DefaultConnection");
+}
+else
+{
+    connection = Environment.GetEnvironmentVariable("DefaultConnection");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(
- builder.Configuration.GetConnectionString("DefaultConnection")
- ));
+    options.UseSqlServer(connection));
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//options.UseSqlServer(
+// builder.Configuration.GetConnectionString("DefaultConnection")
+// ));
 
 var app = builder.Build();
 
